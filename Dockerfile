@@ -20,3 +20,4 @@ EXPOSE 8080
 ENTRYPOINT ["python", "/app/app.py"]
 
 
+
