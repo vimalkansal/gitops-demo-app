@@ -1,0 +1,17 @@
+namespace: pelorus-demo
+
+resources:
+  - ../../base
+  - namespace.yaml
+  - rbac.yaml
+
+images:
+  - name: demo-app
+    newName: ghcr.io/vimalkansal/gitops-demo-app
+    newTag: dev
+
+commonLabels:
+  app.kubernetes.io/part-of: pelorus-demo
+  app.kubernetes.io/managed-by: argocd
+
+
