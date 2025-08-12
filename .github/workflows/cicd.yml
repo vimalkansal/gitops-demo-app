@@ -36,14 +36,22 @@ jobs:
           docker push $IMAGE:$TAG
           docker push $IMAGE:latest
 
-      - name: Update overlay image tag
+      - name: Update overlay image tag and Pelorus annotations
         run: |
+          # Update image tag
           sed -i "s|newName: .*|newName: ghcr.io/${{ github.repository }}|g" k8s/overlays/prod/kustomization.yaml
           sed -i "s|newTag: .*|newTag: ${{ steps.vars.outputs.sha_short }}|g" k8s/overlays/prod/kustomization.yaml
+          
+          # Update Pelorus annotations with commit SHA and deploy time
+          DEPLOY_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          sed -i "s|app.kubernetes.io/vcs-ref: .*|app.kubernetes.io/vcs-ref: \"${GITHUB_SHA}\"|g" k8s/overlays/prod/deployment-patch.yaml
+          sed -i "s|deploy-time: .*|deploy-time: \"${DEPLOY_TIME}\"|g" k8s/overlays/prod/deployment-patch.yaml
+          
+          # Commit changes
           git config user.email "actions@github.com"
           git config user.name "github-actions"
-          git add k8s/overlays/prod/kustomization.yaml
-          git commit -m "Update image to ${{ steps.vars.outputs.sha_short }}" || echo "No changes to commit"
+          git add k8s/overlays/prod/kustomization.yaml k8s/overlays/prod/deployment-patch.yaml
+          git commit -m "Update image to ${{ steps.vars.outputs.sha_short }} and Pelorus annotations" || echo "No changes to commit"
           git push
 
 

@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app
+spec:
+  template:
+    metadata:
+      annotations:
+        app.kubernetes.io/vcs-ref: "7eb20e899111eb023c7dcf291f00ff85598f26ea"
+        app.kubernetes.io/vcs-uri: "https://github.com/vimalkansal/gitops-demo-app"
+        deploy-time: "2025-08-12T00:00:00Z"

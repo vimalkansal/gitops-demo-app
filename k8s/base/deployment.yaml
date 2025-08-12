@@ -18,6 +18,10 @@ spec:
         app.kubernetes.io/name: demo-app
         app.kubernetes.io/part-of: pelorus-demo
         app.kubernetes.io/version: "0.1.0"
+      annotations:
+        app.kubernetes.io/vcs-ref: "COMMIT_SHA"
+        app.kubernetes.io/vcs-uri: "https://github.com/vimalkansal/gitops-demo-app"
+        deploy-time: "DEPLOY_TIME"
     spec:
       containers:
         - name: demo-app
