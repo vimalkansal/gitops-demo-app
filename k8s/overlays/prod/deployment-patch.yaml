@@ -6,6 +6,6 @@ spec:
   template:
     metadata:
       annotations:
-        app.kubernetes.io/vcs-ref: "7eb20e899111eb023c7dcf291f00ff85598f26ea"
+        app.kubernetes.io/vcs-ref: "0dfa101798c46671790ead5d32f86c115473127b"
         app.kubernetes.io/vcs-uri: "https://github.com/vimalkansal/gitops-demo-app"
-        deploy-time: "2025-08-12T00:00:00Z"
+        deploy-time: "2025-08-12T00:32:09Z"
