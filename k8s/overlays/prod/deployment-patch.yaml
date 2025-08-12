@@ -17,10 +17,10 @@ spec:
         deploy-time: "2025-08-12T00:32:09Z"
         
         # For tracking build information
-        app.kubernetes.io/build-id: "WILL_BE_REPLACED_BY_CI"
-        app.kubernetes.io/build-url: "WILL_BE_REPLACED_BY_CI"
+        app.kubernetes.io/build-id: "5"
+        app.kubernetes.io/build-url: "https://github.com/vimalkansal/gitops-demo-app/actions/runs/16896620966"
         
         # For MTTR and Change Failure tracking
-        app.kubernetes.io/change-id: "WILL_BE_REPLACED_BY_CI"
+        app.kubernetes.io/change-id: "98efd9abcdd5b9b078f6b208db375eee1409b382"
         app.kubernetes.io/approved-by: "github-actions"
-        app.kubernetes.io/approved-at: "WILL_BE_REPLACED_BY_CI"
+        app.kubernetes.io/approved-at: "2025-08-12T01:38:50Z"
