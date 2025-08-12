@@ -42,10 +42,20 @@ jobs:
           sed -i "s|newName: .*|newName: ghcr.io/${{ github.repository }}|g" k8s/overlays/prod/kustomization.yaml
           sed -i "s|newTag: .*|newTag: ${{ steps.vars.outputs.sha_short }}|g" k8s/overlays/prod/kustomization.yaml
           
-          # Update Pelorus annotations with commit SHA and deploy time
+          # Update all Pelorus annotations for DORA metrics
           DEPLOY_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          sed -i "s|app.kubernetes.io/vcs-ref: .*|app.kubernetes.io/vcs-ref: \"${GITHUB_SHA}\"|g" k8s/overlays/prod/deployment-patch.yaml
-          sed -i "s|deploy-time: .*|deploy-time: \"${DEPLOY_TIME}\"|g" k8s/overlays/prod/deployment-patch.yaml
+          BUILD_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          # Create a temporary file with all replacements
+          cp k8s/overlays/prod/deployment-patch.yaml k8s/overlays/prod/deployment-patch.yaml.tmp
+          
+          # Update all annotation placeholders
+          sed -i "s|app.kubernetes.io/vcs-ref: \"WILL_BE_REPLACED_BY_CI\"|app.kubernetes.io/vcs-ref: \"${GITHUB_SHA}\"|g" k8s/overlays/prod/deployment-patch.yaml
+          sed -i "s|deploy-time: \"WILL_BE_REPLACED_BY_CI\"|deploy-time: \"${DEPLOY_TIME}\"|g" k8s/overlays/prod/deployment-patch.yaml
+          sed -i "s|app.kubernetes.io/build-id: \"WILL_BE_REPLACED_BY_CI\"|app.kubernetes.io/build-id: \"${{ github.run_number }}\"|g" k8s/overlays/prod/deployment-patch.yaml
+          sed -i "s|app.kubernetes.io/build-url: \"WILL_BE_REPLACED_BY_CI\"|app.kubernetes.io/build-url: \"${BUILD_URL}\"|g" k8s/overlays/prod/deployment-patch.yaml
+          sed -i "s|app.kubernetes.io/change-id: \"WILL_BE_REPLACED_BY_CI\"|app.kubernetes.io/change-id: \"${{ github.event.pull_request.number || github.sha }}\"|g" k8s/overlays/prod/deployment-patch.yaml
+          sed -i "s|app.kubernetes.io/approved-at: \"WILL_BE_REPLACED_BY_CI\"|app.kubernetes.io/approved-at: \"${DEPLOY_TIME}\"|g" k8s/overlays/prod/deployment-patch.yaml
           
           # Commit changes
           git config user.email "actions@github.com"

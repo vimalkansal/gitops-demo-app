@@ -2,10 +2,25 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: demo-app
+  annotations:
+    # Deployment-level annotations for Pelorus
+    app.kubernetes.io/vcs-ref: "0dfa101798c46671790ead5d32f86c115473127b"
+    app.kubernetes.io/vcs-uri: "https://github.com/vimalkansal/gitops-demo-app"
+    deploy-time: "2025-08-12T00:32:09Z"
 spec:
   template:
     metadata:
       annotations:
+        # Pod-level annotations for Pelorus metrics collection
         app.kubernetes.io/vcs-ref: "0dfa101798c46671790ead5d32f86c115473127b"
         app.kubernetes.io/vcs-uri: "https://github.com/vimalkansal/gitops-demo-app"
         deploy-time: "2025-08-12T00:32:09Z"
+        
+        # For tracking build information
+        app.kubernetes.io/build-id: "WILL_BE_REPLACED_BY_CI"
+        app.kubernetes.io/build-url: "WILL_BE_REPLACED_BY_CI"
+        
+        # For MTTR and Change Failure tracking
+        app.kubernetes.io/change-id: "WILL_BE_REPLACED_BY_CI"
+        app.kubernetes.io/approved-by: "github-actions"
+        app.kubernetes.io/approved-at: "WILL_BE_REPLACED_BY_CI"

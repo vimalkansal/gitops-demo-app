@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-credentials
+  namespace: pelorus
+type: Opaque
+stringData:
+  # Replace with your GitHub personal access token
+  # Token needs repo scope for private repos, public_repo for public repos
+  github_token: "YOUR_GITHUB_TOKEN_HERE"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: committime-exporter-config
+  namespace: pelorus
+data:
+  # Configuration for committime exporter to calculate lead time
+  GIT_PROVIDER: "github"
+  GIT_API_URL: "https://api.github.com"
+  LOG_LEVEL: "INFO"
+  
+  # Namespaces to monitor (same as deploytime exporter)
+  NAMESPACES: "pelorus-demo"
+  
+  # Label to identify applications
+  APP_LABEL: "app.kubernetes.io/name"
+  
+  # How to extract commit SHA from deployments
+  COMMIT_ANNOTATION: "app.kubernetes.io/vcs-ref"
+  
+  # Repository URL annotation
+  REPO_ANNOTATION: "app.kubernetes.io/vcs-uri"
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: committime-exporter-github
+  namespace: pelorus
+spec:
+  replicas: 1
+  selector:
+    app: committime-exporter-github
+  template:
+    metadata:
+      labels:
+        app: committime-exporter-github
+        app.kubernetes.io/name: committime-exporter
+    spec:
+      containers:
+      - name: committime-exporter
+        image: quay.io/pelorus/pelorus-committime-exporter:latest
+        env:
+        - name: GIT_PROVIDER
+          valueFrom:
+            configMapKeyRef:
+              name: committime-exporter-config
+              key: GIT_PROVIDER
+        - name: GIT_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: committime-exporter-config
+              key: GIT_API_URL
+        - name: GIT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github-credentials
+              key: github_token
+        - name: NAMESPACES
+          valueFrom:
+            configMapKeyRef:
+              name: committime-exporter-config
+              key: NAMESPACES
+        - name: APP_LABEL
+          valueFrom:
+            configMapKeyRef:
+              name: committime-exporter-config
+              key: APP_LABEL
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: committime-exporter-config
+              key: LOG_LEVEL
+        ports:
+        - containerPort: 8080
+          name: metrics
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
