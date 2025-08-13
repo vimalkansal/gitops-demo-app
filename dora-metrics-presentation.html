@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DORA Metrics & Pelorus Integration - GitOps Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 60px;
+            display: none;
+            animation: slideIn 0.5s ease-in-out;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        h1 {
+            color: #764ba2;
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin: 25px 0 15px 0;
+        }
+
+        p, li {
+            font-size: 1.3em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            padding-left: 30px;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            color: white;
+            background: #667eea;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 1.1em;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .metric-card h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+        }
+
+        .architecture-diagram {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .flow-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .flow-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+            flex: 1;
+            margin: 0 10px;
+            text-align: center;
+        }
+
+        .arrow {
+            font-size: 2em;
+            color: #667eea;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .emoji-large {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="slide-number" id="slideNumber">1 / 12</div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="center-content">
+                <div class="emoji-large">📊</div>
+                <h1>DORA Metrics & Pelorus Integration</h1>
+                <p style="font-size: 1.8em; color: #667eea; text-align: center;">GitOps Demo Application</p>
+                <p style="font-size: 1.4em; color: #999; margin-top: 30px; text-align: center;">A comprehensive guide to implementing DevOps performance metrics</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Agenda -->
+        <div class="slide">
+            <h2>📋 Agenda</h2>
+            <ul style="font-size: 1.5em; line-height: 2.2;">
+                <li>What are DORA Metrics?</li>
+                <li>Why DORA Metrics Matter</li>
+                <li>The Four Key Metrics Deep Dive</li>
+                <li>Introduction to Pelorus</li>
+                <li>Project Structure Overview</li>
+                <li>Configuration Files Walkthrough</li>
+                <li>Pelorus Annotations Explained</li>
+                <li>How Pelorus Captures Metrics</li>
+                <li>Data Flow Architecture</li>
+                <li>Implementation Best Practices</li>
+                <li>Demo & Q&A</li>
+            </ul>
+        </div>
+
+        <!-- Slide 3: What are DORA Metrics -->
+        <div class="slide">
+            <h2>🎯 What are DORA Metrics?</h2>
+            <p><strong>DORA (DevOps Research and Assessment)</strong> metrics are four key measurements that indicate the performance of a software development team.</p>
+            
+            <div class="grid-2">
+                <div class="metric-card">
+                    <h3>📈 Deployment Frequency</h3>
+                    <p>How often an organization successfully releases to production</p>
+                </div>
+                <div class="metric-card">
+                    <h3>⏱️ Lead Time for Changes</h3>
+                    <p>Time from code committed to code successfully running in production</p>
+                </div>
+                <div class="metric-card">
+                    <h3>🔧 Mean Time to Recovery (MTTR)</h3>
+                    <p>How long it takes to recover from a failure in production</p>
+                </div>
+                <div class="metric-card">
+                    <h3>📉 Change Failure Rate</h3>
+                    <p>Percentage of deployments causing a failure in production</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Why DORA Metrics Matter -->
+        <div class="slide">
+            <h2>💡 Why DORA Metrics Matter</h2>
+            
+            <h3>Performance Categories</h3>
+            <div class="flow-container">
+                <div class="flow-item">
+                    <h4>🏆 Elite</h4>
+                    <p>Multiple deploys/day<br>< 1 hour lead time<br>< 1 hour MTTR<br>0-15% failure rate</p>
+                </div>
+                <div class="arrow">→</div>
+                <div class="flow-item">
+                    <h4>⭐ High</h4>
+                    <p>Weekly-Monthly<br>1 day-1 week<br>< 1 day MTTR<br>16-30% failure rate</p>
+                </div>
+                <div class="arrow">→</div>
+                <div class="flow-item">
+                    <h4>📊 Medium/Low</h4>
+                    <p>Monthly or less<br>> 1 week lead time<br>> 1 day MTTR<br>> 30% failure rate</p>
+                </div>
+            </div>
+
+            <h3>Benefits</h3>
+            <ul>
+                <li>📊 Objective measurement of DevOps performance</li>
+                <li>🎯 Clear targets for improvement</li>
+                <li>💰 Direct correlation with business outcomes</li>
+                <li>🤝 Better collaboration between Dev and Ops</li>
+            </ul>
+        </div>
+
+        <!-- Slide 5: Introduction to Pelorus -->
+        <div class="slide">
+            <h2>🚀 Introduction to Pelorus</h2>
+            
+            <p><strong>Pelorus</strong> is an open-source tool by Red Hat that helps measure DORA metrics in Kubernetes/OpenShift environments.</p>
+
+            <h3>Key Components</h3>
+            <ul>
+                <li><strong>Exporters:</strong> Collect metrics from various sources</li>
+                <li><strong>Prometheus:</strong> Stores time-series metrics data</li>
+                <li><strong>Grafana:</strong> Visualizes metrics in dashboards</li>
+            </ul>
+
+            <h3>Pelorus Exporters</h3>
+            <div class="grid-2">
+                <div class="metric-card">
+                    <h3>📦 Deploytime Exporter</h3>
+                    <p>Tracks when deployments occur (Deployment Frequency)</p>
+                </div>
+                <div class="metric-card">
+                    <h3>⏰ Committime Exporter</h3>
+                    <p>Tracks when commits were made (Lead Time)</p>
+                </div>
+                <div class="metric-card">
+                    <h3>🔥 Failure Exporter</h3>
+                    <p>Tracks production failures (MTTR & Change Failure Rate)</p>
+                </div>
+                <div class="metric-card">
+                    <h3>🏗️ Build Exporter</h3>
+                    <p>Tracks build information and status</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Project Structure -->
+        <div class="slide">
+            <h2>📁 Project Structure Overview</h2>
+            
+            <div class="code-block">
+<pre>gitops-demo-app/
+├── 🐍 app/                      # Python Flask application
+│   ├── app.py                   # Main application file
+│   ├── requirements.txt         # Python dependencies
+│   └── test_app.py              # Unit tests
+│
+├── 🐳 Dockerfile                # Container build instructions
+│
+├── 🚢 k8s/                      # Kubernetes manifests
+│   ├── base/                    # Base Kustomize configuration
+│   │   ├── deployment.yaml      # Base deployment
+│   │   ├── service.yaml         # Service definition
+│   │   ├── route.yaml           # OpenShift route
+│   │   └── kustomization.yaml   # Kustomize config
+│   │
+│   └── overlays/prod/           # Production overlays
+│       ├── deployment-patch.yaml # <span class="highlight">Pelorus annotations here!</span>
+│       ├── namespace.yaml       # Namespace definition
+│       └── kustomization.yaml   # Prod Kustomize config
+│
+├── 🔄 argocd/                   # ArgoCD configuration
+│   └── application.yaml         # ArgoCD app definition
+│
+└── 📊 pelorus/                  # Pelorus configuration
+    ├── configure-committime-exporter.yaml
+    └── failure-data-configmap.yaml</pre>
+            </div>
+        </div>
+
+        <!-- Slide 7: Key Configuration Files -->
+        <div class="slide">
+            <h2>⚙️ Key Configuration Files</h2>
+            
+            <h3>1. Base Deployment (k8s/base/deployment.yaml)</h3>
+            <div class="code-block">
+<pre>metadata:
+  labels:
+    app.kubernetes.io/name: demo-app
+    app.kubernetes.io/part-of: pelorus-demo
+    app.kubernetes.io/managed-by: argocd</pre>
+            </div>
+
+            <h3>2. Production Overlay (k8s/overlays/prod/deployment-patch.yaml)</h3>
+            <div class="code-block">
+<pre>annotations:
+  # Critical for Pelorus metrics collection
+  app.kubernetes.io/vcs-ref: "0dfa101..."  # Git commit SHA
+  app.kubernetes.io/vcs-uri: "https://github.com/..."
+  deploy-time: "2025-08-12T00:32:09Z"
+  
+  # Build tracking
+  app.kubernetes.io/build-id: "WILL_BE_REPLACED_BY_CI"
+  app.kubernetes.io/build-url: "WILL_BE_REPLACED_BY_CI"
+  
+  # Change tracking
+  app.kubernetes.io/change-id: "WILL_BE_REPLACED_BY_CI"
+  app.kubernetes.io/approved-by: "github-actions"</pre>
+            </div>
+        </div>
+
+        <!-- Slide 8: Pelorus Annotations Explained -->
+        <div class="slide">
+            <h2>🏷️ Pelorus Annotations Deep Dive</h2>
+            
+            <h3>Essential Annotations</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 15px; text-align: left; border: 1px solid #ddd;">Annotation</th>
+                    <th style="padding: 15px; text-align: left; border: 1px solid #ddd;">Purpose</th>
+                    <th style="padding: 15px; text-align: left; border: 1px solid #ddd;">Used For</th>
+                </tr>
+                <tr>
+                    <td style="padding: 15px; border: 1px solid #ddd;"><code>app.kubernetes.io/vcs-ref</code></td>
+                    <td style="padding: 15px; border: 1px solid #ddd;">Git commit SHA</td>
+                    <td style="padding: 15px; border: 1px solid #ddd;">Lead Time calculation</td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 15px; border: 1px solid #ddd;"><code>app.kubernetes.io/vcs-uri</code></td>
+                    <td style="padding: 15px; border: 1px solid #ddd;">Repository URL</td>
+                    <td style="padding: 15px; border: 1px solid #ddd;">Fetching commit data</td>
+                </tr>
+                <tr>
+                    <td style="padding: 15px; border: 1px solid #ddd;"><code>deploy-time</code></td>
+                    <td style="padding: 15px; border: 1px solid #ddd;">Deployment timestamp</td>
+                    <td style="padding: 15px; border: 1px solid #ddd;">Deployment Frequency</td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 15px; border: 1px solid #ddd;"><code>app.kubernetes.io/build-id</code></td>
+                    <td style="padding: 15px; border: 1px solid #ddd;">CI/CD build number</td>
+                    <td style="padding: 15px; border: 1px solid #ddd;">Build tracking</td>
+                </tr>
+                <tr>
+                    <td style="padding: 15px; border: 1px solid #ddd;"><code>app.kubernetes.io/change-id</code></td>
+                    <td style="padding: 15px; border: 1px solid #ddd;">Change/PR identifier</td>
+                    <td style="padding: 15px; border: 1px solid #ddd;">Change Failure Rate</td>
+                </tr>
+            </table>
+
+            <div class="metric-card" style="margin-top: 30px;">
+                <h3>💡 Pro Tip</h3>
+                <p>These annotations should be automatically updated by your CI/CD pipeline to ensure accurate metrics!</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: How Pelorus Captures Metrics -->
+        <div class="slide">
+            <h2>📈 How Pelorus Captures Each Metric</h2>
+            
+            <h3>1. Deployment Frequency</h3>
+            <div class="flow-container">
+                <div class="flow-item">
+                    <strong>Deploy Event</strong><br>
+                    Pod created/updated
+                </div>
+                <div class="arrow">→</div>
+                <div class="flow-item">
+                    <strong>Deploytime Exporter</strong><br>
+                    Reads deploy-time annotation
+                </div>
+                <div class="arrow">→</div>
+                <div class="flow-item">
+                    <strong>Prometheus</strong><br>
+                    Stores metric
+                </div>
+            </div>
+
+            <h3>2. Lead Time for Changes</h3>
+            <div class="flow-container">
+                <div class="flow-item">
+                    <strong>Committime Exporter</strong><br>
+                    Reads vcs-ref annotation
+                </div>
+                <div class="arrow">→</div>
+                <div class="flow-item">
+                    <strong>GitHub API</strong><br>
+                    Fetches commit timestamp
+                </div>
+                <div class="arrow">→</div>
+                <div class="flow-item">
+                    <strong>Calculate</strong><br>
+                    Deploy time - Commit time
+                </div>
+            </div>
+
+            <h3>3. MTTR & Change Failure Rate</h3>
+            <div class="flow-container">
+                <div class="flow-item">
+                    <strong>Incident System</strong><br>
+                    Reports failure
+                </div>
+                <div class="arrow">→</div>
+                <div class="flow-item">
+                    <strong>Failure Exporter</strong><br>
+                    Tracks incident data
+                </div>
+                <div class="arrow">→</div>
+                <div class="flow-item">
+                    <strong>Calculate</strong><br>
+                    Recovery time & failure %
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Data Flow Architecture -->
+        <div class="slide">
+            <h2>🔄 Complete Data Flow Architecture</h2>
+            
+            <div class="architecture-diagram">
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px;">
+                    <h3>End-to-End Flow</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0;">
+                        <div style="flex: 1; text-align: center;">
+                            <div style="background: #28a745; color: white; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                                <strong>1. Developer</strong>
+                            </div>
+                            <p>Commits code</p>
+                        </div>
+                        <div style="font-size: 2em;">→</div>
+                        <div style="flex: 1; text-align: center;">
+                            <div style="background: #17a2b8; color: white; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                                <strong>2. CI/CD Pipeline</strong>
+                            </div>
+                            <p>Builds & adds annotations</p>
+                        </div>
+                        <div style="font-size: 2em;">→</div>
+                        <div style="flex: 1; text-align: center;">
+                            <div style="background: #ffc107; color: black; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                                <strong>3. ArgoCD</strong>
+                            </div>
+                            <p>Deploys to K8s</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0;">
+                        <div style="flex: 1; text-align: center;">
+                            <div style="background: #dc3545; color: white; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                                <strong>4. Kubernetes</strong>
+                            </div>
+                            <p>Runs pods with annotations</p>
+                        </div>
+                        <div style="font-size: 2em;">→</div>
+                        <div style="flex: 1; text-align: center;">
+                            <div style="background: #6f42c1; color: white; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                                <strong>5. Pelorus Exporters</strong>
+                            </div>
+                            <p>Collect metrics</p>
+                        </div>
+                        <div style="font-size: 2em;">→</div>
+                        <div style="flex: 1; text-align: center;">
+                            <div style="background: #667eea; color: white; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                                <strong>6. Prometheus/Grafana</strong>
+                            </div>
+                            <p>Store & visualize</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<pre># Example: CI/CD pipeline updating annotations
+kubectl patch deployment demo-app -n pelorus-demo \
+  -p '{"spec":{"template":{"metadata":{"annotations":{
+    "app.kubernetes.io/vcs-ref":"'$GIT_SHA'",
+    "deploy-time":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+  }}}}}'</pre>
+            </div>
+        </div>
+
+        <!-- Slide 11: Implementation Best Practices -->
+        <div class="slide">
+            <h2>✅ Implementation Best Practices</h2>
+            
+            <h3>🔧 CI/CD Pipeline Integration</h3>
+            <ul>
+                <li>Automate annotation updates in your pipeline</li>
+                <li>Use environment variables for dynamic values</li>
+                <li>Validate annotations before deployment</li>
+            </ul>
+
+            <h3>📊 Metrics Collection</h3>
+            <ul>
+                <li>Start with one metric at a time</li>
+                <li>Ensure time synchronization across systems</li>
+                <li>Use consistent timezone (UTC recommended)</li>
+            </ul>
+
+            <h3>🏷️ Annotation Standards</h3>
+            <ul>
+                <li>Follow Kubernetes annotation conventions</li>
+                <li>Document your annotation schema</li>
+                <li>Version your annotation format</li>
+            </ul>
+
+            <h3>🔍 Monitoring & Alerting</h3>
+            <ul>
+                <li>Set up alerts for metric degradation</li>
+                <li>Create dashboards for each team</li>
+                <li>Regular metric reviews in retrospectives</li>
+            </ul>
+
+            <div class="metric-card">
+                <h3>⚠️ Common Pitfalls to Avoid</h3>
+                <ul>
+                    <li>❌ Manual annotation updates (automate everything!)</li>
+                    <li>❌ Ignoring timezone differences</li>
+                    <li>❌ Not validating Git SHA format</li>
+                    <li>❌ Missing GitHub token permissions</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 12: Thank You -->
+        <div class="slide">
+            <div class="center-content">
+                <div class="emoji-large">🎉</div>
+                <h1>Thank You!</h1>
+                <p style="font-size: 1.8em; color: #667eea; text-align: center; margin: 30px 0;">Questions & Demo Time</p>
+                
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-top: 40px;">
+                    <h3>🚀 Next Steps</h3>
+                    <ul style="text-align: left;">
+                        <li>Deploy the demo application</li>
+                        <li>Configure Pelorus exporters</li>
+                        <li>Set up Grafana dashboards</li>
+                        <li>Integrate with your CI/CD pipeline</li>
+                        <li>Start measuring and improving!</li>
+                    </ul>
+                </div>
+
+                <p style="margin-top: 40px; color: #999;">
+                    📧 Contact: your-email@example.com<br>
+                    📚 Documentation: github.com/vimalkansal/gitops-demo-app
+                </p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">⬅ Previous</button>
+            <button id="nextBtn" onclick="changeSlide(1)">Next ➡</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 12;
+
+        function showSlide(n) {
+            const slides = document.getElementsByClassName('slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const slideNumber = document.getElementById('slideNumber');
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].classList.remove('active');
+            }
+
+            slides[currentSlide - 1].classList.add('active');
+            slideNumber.textContent = `${currentSlide} / ${totalSlides}`;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') changeSlide(-1);
+            if (event.key === 'ArrowRight') changeSlide(1);
+            if (event.key === 'Home') { currentSlide = 1; showSlide(1); }
+            if (event.key === 'End') { currentSlide = totalSlides; showSlide(totalSlides); }
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) changeSlide(1);  // Swipe left
+            if (touchEndX > touchStartX + 50) changeSlide(-1); // Swipe right
+        }
+
+        // Initialize
+        showSlide(1);
+    </script>
+</body>
+</html>
