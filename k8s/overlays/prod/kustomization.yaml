@@ -8,7 +8,7 @@ resources:
 images:
   - name: demo-app
     newName: ghcr.io/vimalkansal/gitops-demo-app
-    newTag: 98efd9a
+    newTag: 785a2f6
 
 commonLabels:
   app.kubernetes.io/part-of: pelorus-demo
